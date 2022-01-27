@@ -6,7 +6,7 @@ router.post("/", async (req, res) => {
   try {
     req.body.createdBy = req.user.id;
     await Brand.create(req.body);
-    return res.status(200).json({ msg: "Uspjesno dodan novi brend" });
+    return res.status(200).json({ msg: "Uspjesno dodan novi brend!" });
   } catch (error) {
     return res.status(400).json(error);
   }
