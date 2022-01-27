@@ -1,0 +1,13 @@
+.container-form {
+  max-width: 500px !important;
+  margin: 100px auto;
+}
+
+a {
+  text-decoration: inherit !important;
+  color: inherit !important;
+}
+
+tr {
+  vertical-align: middle !important;
+}
