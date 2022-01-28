@@ -9,6 +9,9 @@ const Cars = ({ cars, removeCar }) => {
   const updateCar = (id) => {
     navigate(`/updatecar/${id}`);
   };
+  const getCarDetails = (id) => {
+    navigate(`/car/${id}`);
+  };
   if (!cars.length) {
     return <EmpyList />;
   }
@@ -34,9 +37,11 @@ const Cars = ({ cars, removeCar }) => {
               <td>{car.mileage} km</td>
               <td>{car.productionYear}</td>
               <td>{car.createdBy.username}</td>
-              <td>{car.price} BAM</td>
+              <td>{car.price.toLocaleString("de-DE")} BAM</td>
               <td className="d-flex justify-content-end">
-                <Button className="mx-2">Detalji</Button>
+                <Button onClick={() => getCarDetails(car._id)} className="mx-2">
+                  Detalji
+                </Button>
                 <Button
                   onClick={() => updateCar(car._id)}
                   className="mx-2"
