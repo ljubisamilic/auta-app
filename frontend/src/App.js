@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import AddBrand from "./pages/AddBrand";
 import AddCar from "./pages/AddCar";
 import Error from "./pages/Error";
+import UpdateCar from "./pages/UpdateCar";
 import { useEffect } from "react";
 import axios from "axios";
 import { useGlobalcontext } from "./context";
@@ -71,6 +72,14 @@ function App() {
           element={
             <RequireAuth>
               <AddBrand />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="updatecar/:id"
+          element={
+            <RequireAuth>
+              <UpdateCar />
             </RequireAuth>
           }
         />

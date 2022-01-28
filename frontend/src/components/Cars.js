@@ -2,8 +2,13 @@ import React from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/button";
 import EmpyList from "./EmpyList";
+import { useNavigate } from "react-router-dom";
 
-const Cars = ({ cars }) => {
+const Cars = ({ cars, removeCar }) => {
+  const navigate = useNavigate();
+  const updateCar = (id) => {
+    navigate(`/updatecar/${id}`);
+  };
   if (!cars.length) {
     return <EmpyList />;
   }
@@ -32,10 +37,16 @@ const Cars = ({ cars }) => {
               <td>{car.price} BAM</td>
               <td className="d-flex justify-content-end">
                 <Button className="mx-2">Detalji</Button>
-                <Button className="mx-2" variant="warning">
+                <Button
+                  onClick={() => updateCar(car._id)}
+                  className="mx-2"
+                  variant="warning"
+                >
                   Izmjeni
                 </Button>
-                <Button variant="danger">Ukloni</Button>
+                <Button onClick={() => removeCar(car._id)} variant="danger">
+                  Ukloni
+                </Button>
               </td>
             </tr>
           );
