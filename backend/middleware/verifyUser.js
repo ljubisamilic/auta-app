@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const auth = async (req, res, next) => {
   // provjera heardr-a
   const authHeader = req.headers.authorization;
-  console.log(authHeader);
   if (!authHeader) {
     return res.status(401).json({ msg: "Autentifikacija nije uspjesna" });
   }

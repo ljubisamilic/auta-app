@@ -15,7 +15,10 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const brands = await Brand.find({});
-    return res.status(200).json({ brands });
+    let carBrends = brands.map((brend) => {
+      return { _id: brend._id, company: brend.company };
+    });
+    return res.status(200).json({ carBrends });
   } catch (error) {
     return res.status(400).json(error);
   }
