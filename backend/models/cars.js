@@ -29,6 +29,10 @@ const carSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
+    images: {
+      type: [Object],
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
-import Badge from "react-bootstrap/Badge";
 import ListGroup from "react-bootstrap/ListGroup";
 import ListGroupItem from "react-bootstrap/ListGroupItem";
 import { useParams, useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/esm/Button";
+import ImageGallery from "react-image-gallery";
+
 const Car = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -31,15 +32,25 @@ const Car = () => {
   useEffect(() => {
     getSingleCar();
   }, []);
+
   if (loading) {
     return <h2 className="text-center">Loading</h2>;
   }
   if (!car) {
     return <p>greska</p>;
   }
+
+  const images = car.images.map((image) => {
+    return {
+      original: `http://localhost:5000/${image.imagePath}`,
+      originalAlt: image.imageName,
+    };
+  });
+
+  console.log(images);
   return (
-    <Container>
-      <Card className="mt-5" style={{ maxWidth: "600px", margin: "auto" }}>
+    <Container className="my-5">
+      <Card className="mt-5 my-5" style={{ maxWidth: "600px", margin: "auto" }}>
         <Card.Body>
           <Card.Title>
             Detalji za auto: {car.manufacturer.company} {car.model}
@@ -77,6 +88,12 @@ const Car = () => {
         </ListGroup>
         <Button onClick={() => navigate("/")}>Nazad</Button>
       </Card>
+      <ImageGallery
+        items={images}
+        showThumbnails={false}
+        showPlayButton={false}
+        showIndex={true}
+      />
     </Container>
   );
 };

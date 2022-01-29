@@ -2,10 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Cars from "../components/Cars";
-import { useGlobalcontext } from "../context";
 
 const Home = () => {
-  const { singleCar, setSingleCar } = useGlobalcontext();
   const [loading, setLoading] = useState(false);
   const [cars, setCars] = useState([]);
 

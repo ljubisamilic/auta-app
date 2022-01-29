@@ -4,13 +4,12 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import { useGlobalcontext } from "../context";
 import axios from "axios";
 
 const AddCar = () => {
-  const { user } = useGlobalcontext();
   const [loading, setLodaing] = useState(false);
   const [brands, setBrends] = useState([]);
+  const [images, setImages] = useState("");
   const [value, setValue] = useState({
     model: "",
     mileage: "",
@@ -36,20 +35,39 @@ const AddCar = () => {
     setLodaing(false);
   };
 
+  const fileSelectHandler = (e) => {
+    setImages(e.target.files);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { model, mileage, manufacturer, productionYear, price } = value;
-    if (!model || !mileage || !manufacturer || !productionYear || !price) {
+    if (
+      !model ||
+      !mileage ||
+      !manufacturer ||
+      !productionYear ||
+      !price ||
+      !images
+    ) {
       return alert("Molimo vas popunite formu");
+    }
+
+    const formData = new FormData();
+    formData.append("model", model);
+    formData.append("mileage", mileage);
+    formData.append("manufacturer", manufacturer);
+    formData.append("productionYear", productionYear);
+    formData.append("price", price);
+    for (let i = 0; i < images.length; i++) {
+      formData.append("images", images[i]);
     }
 
     setLodaing(true);
     try {
-      await axios.post(
-        "http://localhost:5000/api/car",
-        { model, mileage, manufacturer, productionYear, price },
-        { headers: { authorization: localStorage.getItem("token") } }
-      );
+      await axios.post("http://localhost:5000/api/car", formData, {
+        headers: { authorization: localStorage.getItem("token") },
+      });
       alert("Uspjesno dodano novo auto");
       setValue({
         model: "",
@@ -71,7 +89,7 @@ const AddCar = () => {
   return (
     <Container className="shadow p-3 mb-5 bg-white rounded">
       <h1 className="mb-5">Dodaj auto</h1>
-      <Form>
+      <Form enctype="multipart/form-data">
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridNaziv">
             <Form.Label>Naziv modela</Form.Label>
@@ -92,6 +110,16 @@ const AddCar = () => {
               value={value.mileage}
               onChange={createValue}
               placeholder="Kilometraza"
+            />
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="formGridSlika">
+            <Form.Label>Slike</Form.Label>
+            <Form.Control
+              type="file"
+              name="images"
+              onChange={fileSelectHandler}
+              multiple
             />
           </Form.Group>
         </Row>
