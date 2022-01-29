@@ -23,7 +23,6 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log(username);
     const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(400).json({ msg: "Pogresno ime" });

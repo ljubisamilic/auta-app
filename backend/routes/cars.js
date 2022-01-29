@@ -1,10 +1,24 @@
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
 const Car = require("../models/cars");
+const { upload } = require("../multer/multer");
 
-router.post("/", async (req, res) => {
+router.post("/", upload.array("images"), async (req, res) => {
   try {
+    let imgArray = [];
+    req.files.forEach((element) => {
+      const image = {
+        imageName: element.originalname,
+        imagePath: element.path,
+        imageType: element.mimetype,
+        imageSize: fileSizeFormatter(element.size, 2),
+      };
+      imgArray.push(image);
+    });
+
     req.body.createdBy = req.user.id;
+    req.body.images = imgArray;
     await Car.create(req.body);
     return res.status(200).json("Uspjesno dodano novo auto");
   } catch (error) {
@@ -16,6 +30,7 @@ router.get("/", async (req, res) => {
   try {
     const cars = await Car.find({ createdBy: req.user.id })
       .sort("createdAt")
+      .select("-images")
       .populate("manufacturer", "company")
       .populate("createdBy", "username");
     res.status(200).json({ cars });
@@ -50,7 +65,12 @@ router.delete("/delete/:id", async (req, res) => {
     if (!car) {
       return res.status(404).json({ msg: "Vozilo nepostoji u bazi" });
     }
-    res.status(200).send();
+    car.images.forEach((image) => {
+      fs.unlink(image.imagePath, (err) => {
+        if (err) throw err;
+      });
+    });
+    return res.status(200).send();
   } catch (error) {
     return res.status(400).json(error);
   }
@@ -61,8 +81,6 @@ router.patch("/:id", async (req, res) => {
     if (!req.body) {
       return res.status(400).json({ msg: "Popunite polja" });
     }
-    console.log(req.body);
-    console.log("neso");
     const car = await Car.findOneAndUpdate(
       {
         _id: req.params.id,
@@ -71,15 +89,25 @@ router.patch("/:id", async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
-    console.log(car);
     if (!car) {
       return res.status(404).json({ msg: "Vozilo nepostoji u bazi" });
     }
     return res.status(200).json({ car });
   } catch (error) {
-    console.log("nesto2");
     return res.status(400).json(error);
   }
 });
+
+const fileSizeFormatter = (bytes, decimal) => {
+  if (bytes === 0) {
+    return "0 Bytes";
+  }
+  const dm = decimal || 2;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "YB", "ZB"];
+  const index = Math.floor(Math.log(bytes) / Math.log(1000));
+  return (
+    parseFloat((bytes / Math.pow(1000, index)).toFixed(dm)) + " " + sizes[index]
+  );
+};
 
 module.exports = router;

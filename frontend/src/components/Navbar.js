@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { useGlobalcontext } from "../context";
 
 const NavbarComponent = () => {
-  const { user, setUser, userData } = useGlobalcontext();
+  const { user, setUser } = useGlobalcontext();
   const handleLogout = () => {
     setUser(false);
     localStorage.removeItem("token");
