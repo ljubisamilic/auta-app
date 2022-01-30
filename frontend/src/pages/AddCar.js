@@ -35,10 +35,6 @@ const AddCar = () => {
     setLodaing(false);
   };
 
-  const fileSelectHandler = (e) => {
-    setImages(e.target.files);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { model, mileage, manufacturer, productionYear, price } = value;
@@ -89,7 +85,7 @@ const AddCar = () => {
   return (
     <Container className="shadow p-3 mb-5 bg-white rounded">
       <h1 className="mb-5">Dodaj auto</h1>
-      <Form enctype="multipart/form-data">
+      <Form encType="multipart/form-data">
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridNaziv">
             <Form.Label>Naziv modela</Form.Label>
@@ -118,7 +114,7 @@ const AddCar = () => {
             <Form.Control
               type="file"
               name="images"
-              onChange={fileSelectHandler}
+              onChange={(e) => setImages(e.target.files)}
               multiple
             />
           </Form.Group>

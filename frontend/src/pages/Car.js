@@ -47,7 +47,6 @@ const Car = () => {
     };
   });
 
-  console.log(images);
   return (
     <Container className="my-5">
       <Card className="mt-5 my-5" style={{ maxWidth: "600px", margin: "auto" }}>
