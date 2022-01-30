@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 const Car = require("../models/cars");
-const { upload } = require("../multer/multer");
+const { upload } = require("../middleware/multer");
 
 router.post("/", upload.array("images"), async (req, res) => {
   try {
@@ -12,7 +12,6 @@ router.post("/", upload.array("images"), async (req, res) => {
         imageName: element.originalname,
         imagePath: element.path,
         imageType: element.mimetype,
-        imageSize: fileSizeFormatter(element.size, 2),
       };
       imgArray.push(image);
     });
@@ -76,12 +75,39 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", upload.array("newimages"), async (req, res) => {
   try {
     if (!req.body) {
       return res.status(400).json({ msg: "Popunite polja" });
     }
-    const car = await Car.findOneAndUpdate(
+    let imgArray = [];
+    req.files.forEach((element) => {
+      const image = {
+        imageName: element.originalname,
+        imagePath: element.path,
+        imageType: element.mimetype,
+      };
+      imgArray.push(image);
+    });
+    const images = JSON.parse(req.body.images);
+    images.forEach((element) => {
+      imgArray.push(element);
+    });
+
+    req.body.images = imgArray;
+    const car = await Car.findOne({
+      _id: req.params.id,
+      createdBy: req.user.id,
+    });
+    if (!car) {
+      return res.status(404).json({ msg: "Vozilo nepostoji u bazi" });
+    }
+
+    const deleteImages = car.images.filter(
+      (imgs) => !req.body.images.some((img) => img.imagePath === imgs.imagePath)
+    );
+
+    const updateCar = await Car.findOneAndUpdate(
       {
         _id: req.params.id,
         createdBy: req.user.id,
@@ -89,25 +115,21 @@ router.patch("/:id", async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
-    if (!car) {
+    if (!updateCar) {
       return res.status(404).json({ msg: "Vozilo nepostoji u bazi" });
     }
-    return res.status(200).json({ car });
+    if (deleteImages.length) {
+      deleteImages.forEach((image) => {
+        fs.unlink(image.imagePath, (err) => {
+          if (err) throw err;
+        });
+      });
+    }
+
+    return res.status(200).json({ msg: "Uspjesno ste izmijenili podatke" });
   } catch (error) {
     return res.status(400).json(error);
   }
 });
-
-const fileSizeFormatter = (bytes, decimal) => {
-  if (bytes === 0) {
-    return "0 Bytes";
-  }
-  const dm = decimal || 2;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "YB", "ZB"];
-  const index = Math.floor(Math.log(bytes) / Math.log(1000));
-  return (
-    parseFloat((bytes / Math.pow(1000, index)).toFixed(dm)) + " " + sizes[index]
-  );
-};
 
 module.exports = router;

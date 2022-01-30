@@ -21,28 +21,28 @@ import { useGlobalcontext } from "./context";
 
 function App() {
   const { setUser, setUserData } = useGlobalcontext();
-  const refreshToken = async () => {
-    if (!localStorage.getItem("token")) return;
-    console.log(localStorage.getItem("token"));
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/user/check",
-        {},
-        {
-          headers: {
-            authorization: localStorage.getItem("token"),
-          },
-        }
-      );
-      setUser(true);
-      setUserData(response.data.user);
-      localStorage.setItem("token", response.data.token);
-    } catch (error) {
-      console.log(error);
-      setUser(false);
-    }
-  };
+
   useEffect(() => {
+    const refreshToken = async () => {
+      if (!localStorage.getItem("token")) return;
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/user/check",
+          {},
+          {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          }
+        );
+        setUser(true);
+        setUserData(response.data.user);
+        localStorage.setItem("token", response.data.token);
+      } catch (error) {
+        console.log(error);
+        setUser(false);
+      }
+    };
     refreshToken();
   }, []);
 

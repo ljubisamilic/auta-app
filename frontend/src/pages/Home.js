@@ -25,7 +25,6 @@ const Home = () => {
 
   // remove car
   const removeCar = async (id) => {
-    console.log(id);
     setLoading(true);
     await axios
       .delete(
@@ -36,7 +35,6 @@ const Home = () => {
         {}
       )
       .then((res) => {
-        console.log(res);
         setLoading(false);
         setCars(cars.filter((car) => car._id !== id));
       })
