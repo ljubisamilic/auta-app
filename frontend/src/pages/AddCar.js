@@ -61,7 +61,7 @@ const AddCar = () => {
 
     setLodaing(true);
     try {
-      await axios.post("http://localhost:5000/api/car", formData, {
+      await axios.post("http://localhost:5000/api/car/create", formData, {
         headers: { authorization: localStorage.getItem("token") },
       });
       alert("Uspjesno dodano novo auto");

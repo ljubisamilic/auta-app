@@ -4,7 +4,7 @@ const fs = require("fs");
 const Car = require("../models/cars");
 const { upload } = require("../middleware/multer");
 
-router.post("/", upload.array("images"), async (req, res) => {
+router.post("/create", upload.array("images"), async (req, res) => {
   try {
     let imgArray = [];
     req.files.forEach((element) => {
@@ -25,11 +25,10 @@ router.post("/", upload.array("images"), async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/getall", async (req, res) => {
   try {
-    const cars = await Car.find({ createdBy: req.user.id })
+    const cars = await Car.find({})
       .sort("createdAt")
-      .select("-images")
       .populate("manufacturer", "company")
       .populate("createdBy", "username");
     res.status(200).json({ cars });
@@ -38,7 +37,35 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/auth/getall", async (req, res) => {
+  try {
+    const cars = await Car.find({ createdBy: req.user.id })
+      .sort("createdAt")
+      .populate("manufacturer", "company")
+      .populate("createdBy", "username");
+    res.status(200).json({ cars });
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+});
+
+router.get("/getone/:id", async (req, res) => {
+  try {
+    const car = await Car.findOne({
+      _id: req.params.id,
+    })
+      .populate("manufacturer")
+      .populate("createdBy", "username");
+    if (!car) {
+      return res.status(404).json({ msg: "Vozilo nepostoji u bazi" });
+    }
+    res.status(200).json({ car });
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+});
+
+router.get("/auth/getone/:id", async (req, res) => {
   try {
     const car = await Car.findOne({
       _id: req.params.id,
@@ -75,7 +102,7 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", upload.array("newimages"), async (req, res) => {
+router.patch("/update/:id", upload.array("newimages"), async (req, res) => {
   try {
     if (!req.body) {
       return res.status(400).json({ msg: "Popunite polja" });
@@ -121,7 +148,7 @@ router.patch("/:id", upload.array("newimages"), async (req, res) => {
     if (deleteImages.length) {
       deleteImages.forEach((image) => {
         fs.unlink(image.imagePath, (err) => {
-          if (err) throw err;
+          if (err) console.log(err);
         });
       });
     }

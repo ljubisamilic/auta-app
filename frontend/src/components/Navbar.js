@@ -29,6 +29,9 @@ const NavbarComponent = () => {
                 <Nav.Link as={Link} to="addbrand">
                   Dodaj brend
                 </Nav.Link>
+                <Nav.Link as={Link} to="mycars">
+                  Lista
+                </Nav.Link>
               </>
             )}
           </Nav>

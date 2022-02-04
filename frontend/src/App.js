@@ -15,6 +15,7 @@ import AddCar from "./pages/AddCar";
 import Error from "./pages/Error";
 import UpdateCar from "./pages/UpdateCar";
 import Car from "./pages/Car";
+import MyCars from "./pages/MyCars";
 import { useEffect } from "react";
 import axios from "axios";
 import { useGlobalcontext } from "./context";
@@ -89,6 +90,14 @@ function App() {
           element={
             <RequireAuth>
               <Car />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="mycars"
+          element={
+            <RequireAuth>
+              <MyCars />
             </RequireAuth>
           }
         />
