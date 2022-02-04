@@ -26,7 +26,7 @@ const UpdateCar = () => {
   const getSingleCar = async () => {
     setLoading(true);
     await axios
-      .get(`http://localhost:5000/api/car/${id}`, {
+      .get(`http://localhost:5000/api/car/auth/getone/${id}`, {
         headers: { authorization: localStorage.getItem("token") },
       })
       .then((res) => {
@@ -91,12 +91,16 @@ const UpdateCar = () => {
     }
     setLoading(true);
     try {
-      await axios.patch(`http://localhost:5000/api/car/${id}`, formData, {
-        headers: { authorization: localStorage.getItem("token") },
-      });
+      await axios.patch(
+        `http://localhost:5000/api/car/update/${id}`,
+        formData,
+        {
+          headers: { authorization: localStorage.getItem("token") },
+        }
+      );
       alert("Uspjesno izmjena podataka");
       setLoading(false);
-      navigate("/");
+      navigate("/mycars");
     } catch (error) {
       setLoading(false);
       console.log(error);
