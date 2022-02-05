@@ -159,4 +159,58 @@ router.patch("/update/:id", upload.array("newimages"), async (req, res) => {
   }
 });
 
+// search car
+
+router.get("/search", async (req, res) => {
+  try {
+    const query = req.query.query.trim();
+    const company = req.query.company;
+    const price = parseInt(req.query.price);
+    let cars = [];
+    if (price && company) {
+      cars = await Car.find({
+        model: { $regex: new RegExp("^" + query + ".*", "i") },
+        manufacturer: company,
+        price: { $lte: price },
+      });
+    } else if (company) {
+      cars = await Car.find({
+        model: { $regex: new RegExp("^" + query + ".*", "i") },
+        manufacturer: company,
+      });
+    } else if (!company && !price) {
+      cars = await Car.find({
+        model: { $regex: new RegExp("^" + query + ".*", "i") },
+      });
+    } else if (price) {
+      cars = await Car.find({
+        model: { $regex: new RegExp("^" + query + ".*", "i") },
+        price: { $lte: price },
+      });
+    }
+    // results = await Car.find({
+    //   $or: [
+    //     {
+    //       $and: [
+    //         {
+    //           model: { $regex: new RegExp("^" + query + ".*", "i") },
+    //           manufacturer: company,
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       $and: [
+    //         {
+    //           model: { $regex: new RegExp("^" + query + ".*", "i") },
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // }).pretty();
+    return res.status(200).json({ cars });
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+});
+
 module.exports = router;

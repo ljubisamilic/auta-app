@@ -55,13 +55,11 @@ const MyCars = () => {
   if (loading) {
     return <h1 className="text-center">Loading</h1>;
   }
-  console.log(cars);
 
   return (
     <Container>
       <Row md={4}>
         {cars.map((car) => {
-          console.log(car);
           return <Cars key={car._id} car={car} removeCar={removeCar} />;
         })}
       </Row>

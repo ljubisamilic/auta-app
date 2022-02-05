@@ -2,7 +2,6 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/button";
 import EmpyList from "./EmpyList";
-
 import Col from "react-bootstrap/Col";
 import { useNavigate, useLocation } from "react-router-dom";
 
